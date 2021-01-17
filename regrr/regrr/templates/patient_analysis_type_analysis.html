@@ -1,0 +1,241 @@
+﻿(% extends "layout.html" %)
+(% import "macros.html" as macros %)
+
+
+(% block block_head %)
+<style>
+	.fs-small {
+		font-size: 0.85em;
+	}
+
+	.fs-large {
+		font-size: 1.2em;
+	}
+</style>
+(% endblock %)
+
+
+(% block content %)
+
+<div id="analisis" v-cloak>
+	<div v-if="tests">
+
+		<ul class="alt">
+			<li><b>Дата поступления образца:</b> <span v-html="nbsps + /*params.*/date_receipt_example"></span></li>
+			<li><b>Дата доставки биоматериала:</b> <span v-html="nbsps + /*params.*/date_delivery_biomaterial"></span></li>
+			<li><b>Дата выполнения:</b><span v-html="nbsps + /*params.*/date_completion"></span></li>
+			<li><b>Дата печати:</b><span v-html="nbsps + params.date_print"></span></li>
+			<li><b>№ заявки:</b><span v-html="nbsps + params.request_number"></span></li>
+			<li><b>Заказчик:</b><span v-html="nbsps + params.customer"></span></li>
+			<li><b>Исследованные биоматериалы:</b><span v-html="nbsps + params.biomaterials"></span></li>
+			<li><b>Анализы выполнены на оборудовании:</b><span v-html="nbsps + params.equipment"></span></li>
+			<li><b>Заключение/Примечание:</b><span v-html="nbsps + params.conclusion_note"></span></li>
+			<li><b>Исследование выполнил:</b><span v-html="nbsps + user"></span></li>
+			<li><b>Дата фиксации:</b><span v-html="nbsps + date_of_creation"></span></li>
+			<li><b>Результат:</b><span v-html="nbsps + result"></span></li>
+		</ul>
+
+		<br>
+
+		<input type="checkbox" id="isHideEmpty" name="isHideEmpty" v-model="settings.is_hide_empty">
+		<label for="isHideEmpty">Скрыть пустые результаты</label>
+
+		<div class="table-wrapper">
+			<table class="alt" v-if="!isMobile">
+				<thead>
+					<tr>
+						<th class="ta-l va-m">Тест</th>
+						<th class="ta-c va-m">Результат</th>
+						<th class="ta-c va-m">Еденицы измерения</th>
+						<th class="ta-c va-m">Референсные значения</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="test in tests2">
+						<td v-html="test.name" class="va-m"></td>
+						<td v-html="test.valuef" class="va-m ta-c"></td>
+						<td v-html="nbsp(test.unit)" class="ta-c va-m"></td>
+						<td v-html="nbsp(test.refs)" class="ta-c va-m"></td>
+					</tr>
+				</tbody>
+			</table>
+			<table class="alt" v-else>
+				<thead>
+					<tr>
+						<th class="ta-l va-m">
+							<div><b>Тест</b></div>
+							<div class="fs-small" style="color:#7f888f;">Еденицы измерения</div>
+							<div class="fs-small" style="color:#7f888f;">Референсные значения</div>
+						</th>
+						<th class="ta-c va-m">Результат</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="test in tests2">
+						<td class="va-m">
+							<div><b v-html="test.name"></b></div>
+							<div v-html="nbsp(test.unit)" class="fs-small"></div>
+							<div v-html="nbsp(test.refs)" class="fs-small"></div>
+						</td>
+						<td v-html="test.valuef" class="va-m ta-c"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<a :href="url_print" target="_blank">
+			<i class="fa fa-2x fa-print"></i>
+		</a>
+	</div>
+
+	<div v-else>
+		<ul class="alt">
+			<li><b>Исследование выполнил:</b><span v-html="nbsp('   ') + user"></span></li>
+			<li><b>Дата выполнения:</b><span v-html="nbsp('   ') + date_of_creation"></span></li>
+			<li><b>Результат:</b><span v-html="nbsp('   ') + result"></span></li>
+		</ul>
+
+		<br>
+
+		<div class="table-wrapper">
+			<table class="alt">
+				<thead>
+					<tr>
+						<th>№</th>
+						<th>Параметр</th>
+						<th>Значение</th>
+						<th>Очки</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(item, i) in data.items" v-bind:key="i">
+						<td v-html="i + 1"></td>
+						<td v-html="item.name"></td>
+						<td v-html="item.label"></td>
+						<td v-html="item.points"></td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3" align="right">Всего очков</td>
+						<td v-html="data.points"></td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+
+	var data = {};
+	try {
+		((server.data | safe));
+	}
+	catch (e) {
+		console.warn('Серверные данные не были проинициализированы');
+	}
+
+	if (typeof data.data === 'string')
+		data.data = JSON.parse(data.data);
+
+
+	document.addEventListener("DOMContentLoaded", function (event) {
+
+		var route = data.route_analysis_print_id || '/patient/<patient_id>/analysis_type/<analysis_type>/analysis_print/<analysis_id>';
+		data.analysis_id = data.id;
+		data.url_print = Utils.routes.makeUrlFromRoute(route, data);
+		data.nbsps = Utils.html.nbsp('    ');
+
+		if (data.tests) {
+
+			if (data.tests.length >= data.data.items.length) {
+				for (var i = 0, n = data.data.items.length; i < n; ++i) {
+					var test = data.tests[i];
+					test.value = data.data.items[i];
+					test.valuef = Utils.rules.value_get_descformat(test).value_format;
+				}
+
+				if (data.tests.length > data.data.items.length) {
+					console.warn('Количество тестов больше количества результатов, лишние тесты будут заполнены пустыми строками');
+
+					for (var i = data.data.items.length, n = data.tests.length; i < n; ++i) {
+						var test = data.tests[i];
+						test.value = '';
+						test.valuef = Utils.rules.value_get_descformat(test).value_format;
+					}
+				}
+			}
+			else {
+				console.warn('Количество тестов меньше количества результатов');
+				for (var i = 0, n = data.tests.length; i < n; ++i) {
+					var test = data.tests[i];
+					test.value = data.data.items[i];
+					test.valuef = Utils.rules.value_get_descformat(test).value_format;
+				}
+			}
+		}
+		else
+			data.tests = null;
+
+		var paramsDef = {
+			date_receipt_example: '[---]',
+			request_number: '[---]',
+			customer: '[---]', // НМИЦ онкологии
+			//department: '',
+			date_delivery_biomaterial: '[---]',
+			date_completion: '[---]',
+			date_print: '[---]',
+			biomaterials: '[---]', // Кровь (активатор свертывания и гель)
+			equipment: '[---]', // Architect c4000
+			conclusion_note: '', // Измерение Креатинина стандартизовано по методу IDMS
+		};
+
+		data.params = _.extend({}, paramsDef, data.data.params);
+
+		var settingsDef = {
+			is_hide_empty: false
+		};
+
+		data.settings = _.extend({}, settingsDef, data.settings);
+
+		data.isMobile = breakpoints.active('min-to-small');
+
+		var app = new Vue({
+			el: '#analisis',
+			data: data,
+			methods: {
+				nbsp: Utils.html.nbsp,
+			},
+			computed: {
+				tests2: function () {
+					if (!this.settings.is_hide_empty)
+						return this.tests;
+
+					var tests2 = [];
+					for (var i = 0, n = this.tests.length; i < n; ++i) {
+						var test = this.tests[i];
+						if (test.valuef)
+							tests2.push(test);
+					}
+
+					return tests2;
+				}
+			}
+		});
+
+
+		breakpoints.on('min-to-small', function () {
+			app.isMobile = true;
+			console.log('ACTIVE min-to-small');
+		});
+		breakpoints.on('small-to-max', function () {
+			app.isMobile = false;
+			console.log('ACTIVE small-to-max');
+		});
+	});
+
+</script>
+
+
+(% endblock %)

@@ -1,0 +1,41 @@
+﻿(% extends "layout.html" %)
+(% import "macros.html" as macros %)
+
+
+(% block block_head %)
+
+	<style>
+		.form-panel {
+			max-width: 700px;
+		}
+	</style>
+
+(% endblock %)
+
+
+
+(% block content %)
+
+	<form method="post" action="/feedback" class="form-panel">
+
+		<div class="row gtr-uniform">
+
+			<div class="col-12">
+				<input type="text" name="feedback-title" id="feedback-title" value="" placeholder="Заголовок сообщения" required />
+			</div>
+
+			<div class="col-12">
+				<textarea name="feedback-message" id="feedback-message" placeholder="Текст сообщения" rows="6" required></textarea>
+			</div>
+
+			<div class="col-12">
+				<ul class="actions">
+					<li><button class="primary" type="submit"><i class="icon fa-envelope-o"></i>&nbsp;&nbsp; Отправить сообщение</button>
+				</ul>
+			</div>
+
+		</div>
+
+	</form>
+
+(% endblock %)

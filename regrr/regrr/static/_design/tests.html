@@ -1,0 +1,238 @@
+﻿<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Реестр результатов анализов и тестирования</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+
+		<style>
+			#table_tests > tbody > tr > td:nth-child(2),
+			#table_tests > tbody > tr > td:nth-child(3) {
+				text-align: center;
+			}
+		</style>
+
+		<script src="extern/vue.js-v2.5.22/vue.js"></script>
+
+	</head>
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+
+				<!-- Header -->
+				<header id="header">
+					<a href="index.html" class="logo"><h2>Реестр результатов анализов и&nbsp;тестирования</h2></a>
+				</header>
+
+				<!-- Banner -->
+				<section id="banner">
+					<div class="content">
+						<header class="major1">
+							<h1>Тесты</h1>
+						</header>
+
+						<br>
+
+						<div class="row">
+							<div class="col-12">
+								<input type="button" value="Добавить" class="primary" />
+							</div>
+						</div>
+
+						<br>
+
+						<div class="table-wrapper">
+							<table id="table_tests" class="alt">
+								<thead>
+									<tr>
+										<th>Тест</th>
+										<th>Еденицы измерения</th>
+										<th>Референсные значения</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="test in tests">
+										<td v-html="test.name"></td>
+										<td v-html="test.unit"></td>
+										<td v-html="test.references"></td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<td>{{ tests.length }}</td>
+										<td></td>
+										<td></td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+				</section>
+
+			</div>
+		</div>
+
+		<!-- Sidebar -->
+		<div id="sidebar">
+			<div class="inner">
+
+				<!-- Search -->
+				<section id="search" class="alt">
+					<form method="post" action="/#">
+						<a href="/logout" class="button fit primary">Выйти</a>
+					</form>
+
+					<form id="search_form" method="post" action="#">
+						<input type="text" name="query" id="query" placeholder="Поиск" />
+					</form>
+				</section>
+
+
+
+				<!-- Menu -->
+				<nav id="menu">
+					<header class="major">
+						<h2>Меню</h2>
+					</header>
+					<ul>
+						<li><a href="index.html">Пациенты</a></li>
+						<li><a href="tests.html">Тесты</a></li>
+						<li><a href="settings.html">Настройки</a></li>
+						<li><a href="link.html">Связь</a></li>
+
+						<li>
+							<span class="opener">Dev</span>
+							<ul>
+								<li><a href="login.html">Login</a></li>
+								<li><a href="editorial/index.html">Editorial</a></li>
+								<li><a href="tests_viewer.html">Test viewer</a></li>
+							</ul>
+						</li>
+					</ul>
+				</nav>
+
+				<!-- Section -->
+				<!--
+				<section>
+					<header class="major">
+						<h2>Связь</h2>
+					</header>
+					<ul class="contact">
+						<li class="fa-envelope-o"><a href="#">mail@ya.ru</a></li>
+						<li style="padding-left: 0em;" class="gtr-uniform">
+							<div class="row gtr-uniform">
+								<div class="col-12">
+									<textarea name="link-message" id="link-message" placeholder="Или напишете сообщение сюда" rows="6"></textarea>
+								</div>
+								<div class="col-12">
+									<input type="submit" value="Отправить сообщение" class="primary" />
+								</div>
+							</div>
+						</li>
+					</ul>
+
+
+				</section>-->
+				<!-- Footer -->
+				<!--<footer id="footer">
+					<p class="copyright">&copy; 2019. regrr.ru. Все права защищены.<br> Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+				</footer>-->
+
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+	<script>
+		function nbsp(s) {
+			return s.replace(/ /g, '&nbsp;');
+		}
+
+		function b(s) {
+			return '<b>' + s + '</b>';
+		}
+
+		function t(name, unit, references) {
+			return {
+				name: name,
+				unit: unit,
+				references: nbsp(references),
+			};
+		}
+
+
+		function Tests() {
+			this._map = {};
+		}
+
+		Tests.prototype.add = function(name, unit, references) {
+			this._map[name] = t(name, unit, references);
+		}
+
+		Tests.prototype.toArray = function () {
+			var keys = [];
+			for (var key in this._map) {
+				keys.push(key);
+			}
+
+			keys.sort();
+
+			var arr = [];
+			for (var i = 0, n = keys.length; i < n; ++i) {
+				arr.push(this._map[keys[i]]);
+			}
+
+			return arr;
+		}
+
+		var tests = new Tests();
+
+		tests.add('Лейкоциты', 'x10<sup>9</sup>/л', '4,00 - 9,00');
+		tests.add('Эритроциты', 'x10<sup>12</sup>/л', '4,00 - 5,00');
+		tests.add('Гемоглобин', 'г/л', '130 - 160');
+		tests.add('Гематокрит', '%', '40 - 48');
+		tests.add('Средний объем эритроцита', 'фл', '80,00 - 100,00');
+		tests.add('Среднее содержание гемоглобина в эритроците', 'пг', '27,00 - 31,00');
+		tests.add('Средняя концентрация гемоглобина в эритроците', 'г/л', '320 - 370');
+		tests.add('Коэффициент вариации относительной ширины распределения эритроцитов по объему', '%', '10,00 - 20,00');
+		tests.add('Тромбоциты', 'x10<sup>9</sup>/л', '180 - 320');
+		tests.add('Относительная ширина распределения тромбоцитов по объему', '%', '10,00 - 20,00');
+		tests.add('Средний объем тромбоцитов', 'фл', '7,40 - 10,40');
+		tests.add('Тромбокрит', '%', '0,15 - 0,40');
+
+		tests.add('АЛТ', 'Ед/л', '0,00 - 55,00');
+		tests.add('АСТ', 'Ед/л', '5,00 - 34,00');
+		tests.add('Белок общий', 'г/л', '63,00 - 83,00');
+		tests.add('Билирубин общий', 'мкмоль/л', '40 - 48');
+		tests.add('Глюкоза', 'мкмоль/л', '3,89 - 5,83');
+		tests.add('Креатинин', 'мкмоль/л', '63,60 - 110,50');
+		tests.add('Клубочковая фильтрация CKD-EPI Креатинин', 'мл/мин.1.73м^2', '> 60,00');
+		tests.add('Мочевина', 'мкмоль/л', '3,00 - 9,20');
+		tests.add('С-реактивный белок', 'мг/л', '0,00 - 5,00');
+
+		var data = {
+			tests: tests.toArray()
+		}
+
+
+		var app = new Vue({
+			el: '#table_tests',
+			data: data
+		});
+	</script>
+
+</body>
+</html>

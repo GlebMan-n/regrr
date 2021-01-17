@@ -1,0 +1,337 @@
+﻿(% extends "layout.html" %)
+(% import "macros.html" as macros %)
+
+
+(% block block_head %)
+<style>
+	#form_profile {
+		max-width: 700px;
+	}
+</style>
+
+<script src="/static/_design/assets/js/jquery.min.js"></script>
+<link href="/static/_design/extern/air-datepicker-v2.2.3/css/datepicker.css" rel="stylesheet" type="text/css">
+<script src="/static/_design/extern/air-datepicker-v2.2.3/js/datepicker.js"></script>
+
+(% endblock %)
+
+
+
+(% block content %)
+
+	<form method="post" action="/patient_add" id="form_profile">
+		<div class="row gtr-uniform">
+
+			<!-- label + input - lastname -->
+			<div class="col-4 col-10-xsmall">
+				<input class="input-static input-static-bold" type="text" value="Фамилия" disabled />
+			</div>
+
+			<div class="col-0 col-2-xsmall align-right">
+				<div v-if="lastname_icon" class="icon-va-center">
+					<i :class="[lastname_icon]"></i>
+				</div>
+			</div>
+
+			<div class="col-7 col-12-xsmall">
+				<input type="text" name="lastname" id="lastname"
+					:value="lastname"
+					@input="lastname = $event.target.value"
+					placeholder="Фамилия"
+					required />
+			</div>
+			<div class="col-1 col-0-xsmall">
+				<div v-if="lastname_icon" class="icon-va-center">
+					<i :class="[lastname_icon]"></i>
+				</div>
+			</div>
+
+			<!-- label + input - firstname -->
+			<div class="col-4 col-10-xsmall">
+				<input class="input-static input-static-bold" type="text" value="Имя" disabled />
+			</div>
+
+			<div class="col-0 col-2-xsmall align-right">
+				<div v-if="firstname_icon" class="icon-va-center">
+					<i :class="[firstname_icon]"></i>
+				</div>
+			</div>
+
+			<div class="col-7 col-12-xsmall">
+				<input type="text" name="firstname" id="firstname"
+					:value="firstname"
+					@input="firstname = $event.target.value"
+					placeholder="Имя"
+					required />
+			</div>
+			<div class="col-1 col-0-xsmall">
+				<div v-if="firstname_icon" class="icon-va-center">
+					<i :class="[firstname_icon]"></i>
+				</div>
+			</div>
+
+			<!-- label + input - middlename -->
+			<div class="col-4 col-10-xsmall">
+				<input class="input-static input-static-bold" type="text" value="Отчество" disabled />
+			</div>
+
+			<div class="col-0 col-2-xsmall align-right">
+				<div v-if="middlename_icon" class="icon-va-center">
+					<i :class="[middlename_icon]"></i>
+				</div>
+			</div>
+
+			<div class="col-7 col-12-xsmall">
+				<input type="text" name="middlename" id="middlename"
+					:value="middlename"
+					@input="middlename = $event.target.value"
+					placeholder="Отчество"
+					required />
+			</div>
+			<div class="col-1 col-0-xsmall">
+				<div v-if="middlename_icon" class="icon-va-center">
+					<i :class="[middlename_icon]"></i>
+				</div>
+			</div>
+
+			<!-- label + input - gender -->
+			<div class="col-4 col-10-xsmall">
+				<input class="input-static input-static-bold" type="text" value="Пол" disabled />
+			</div>
+			<div class="col-0 col-2-xsmall align-right">
+				<div v-if="gender_icon" class="icon-va-center">
+					<i v-bind:class="[gender_icon]"></i>
+				</div>
+			</div>
+			<div class="col-7 col-12-xsmall">
+				<select name="gender" id="gender" v-model="gender">
+					<option disabled value="">- Пол -</option>
+					<option value="0">Не указан</option>
+					<option value="1">Мужской</option>
+					<option value="2">Женский</option>
+				</select>
+			</div>
+			<div class="col-1 col-0-xsmall">
+				<div v-if="gender_icon" class="icon-va-center">
+					<i v-bind:class="[gender_icon]"></i>
+				</div>
+			</div>
+
+			<!-- label + input - date_of_birth -->
+			<div class="col-4 col-10-xsmall">
+				<input class="input-static input-static-bold" type="text" value="Дата рождения" disabled />
+			</div>
+
+			<div class="col-0 col-2-xsmall align-right">
+				<div v-if="date_of_birth_icon" class="icon-va-center">
+					<i :class="[date_of_birth_icon]"></i>
+				</div>
+			</div>
+
+			<div class="col-7 col-12-xsmall">
+				<input type="text" name="date_of_birth" id="date_of_birth"
+					class="my-datepicker"
+					:value="date_of_birth"
+					@input="date_of_birth = $event.target.value"
+					placeholder="Дата рождения"
+					required />
+			</div>
+			<div class="col-1 col-0-xsmall">
+				<div v-if="date_of_birth_icon" class="icon-va-center">
+					<i :class="[date_of_birth_icon]"></i>
+				</div>
+			</div>
+
+			<!-- label + input department -->
+			<div class="col-4 col-10-xsmall">
+				<input class="input-static input-static-bold" type="text" value="Отделение" disabled />
+			</div>
+
+			<div class="col-0 col-2-xsmall align-right">
+				<div v-if="department_icon" class="icon-va-center">
+					<i :class="[department_icon]"></i>
+				</div>
+			</div>
+
+			<div class="col-7 col-12-xsmall">
+				<input type="text" name="department" id="department"
+					:value="department"
+					@input="department = $event.target.value"
+					placeholder="Отделение"
+					required />
+			</div>
+			<div class="col-1 col-0-xsmall">
+				<div v-if="department_icon" class="icon-va-center">
+					<i :class="[department_icon]"></i>
+				</div>
+			</div>
+
+
+			<!-- label + input diagnosis -->
+			<div class="col-4 col-10-xsmall">
+				<input class="input-static input-static-bold" type="text" value="Диагноз" disabled />
+			</div>
+
+			<div class="col-0 col-2-xsmall align-right">
+				<div v-if="diagnosis_icon" class="icon-va-center">
+					<i :class="[diagnosis_icon]"></i>
+				</div>
+			</div>
+
+			<div class="col-7 col-12-xsmall">
+				<textarea name="diagnosis" id="diagnosis"
+					:value="diagnosis"
+					@input="diagnosis = $event.target.value"
+					placeholder="Диагноз"
+					rows="6"
+					required>
+				</textarea>
+			</div>
+			<div class="col-1 col-0-xsmall">
+				<div v-if="diagnosis_icon" class="icon-va-center">
+					<i :class="[diagnosis_icon]"></i>
+				</div>
+			</div>
+
+
+			<!-- submit -->
+			<div class="col-12">
+				<ul class="actions">
+					<li>
+						<input 
+							type="submit"
+							value="Добавить"
+							class="primary"
+							:disabled="!isEnableAdd"
+							/>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</form>
+
+
+	<script>
+		var icon_ok = Utils.icons.ok;
+		var icon_fail = Utils.icons.fail;
+		var icon_wait = Utils.icons.wait;
+
+		var data = {};
+
+		try {
+			((data | safe));
+		}
+		catch (e) {
+			console.log('Серверные данные не были проинициализированы');
+		}
+
+		data.username = data.username || '';
+		data.username_icon = null;
+		data.lastname = data.lastname || '';
+		data.lastname_icon = null;
+		data.firstname = data.firstname || '';
+		data.firstname_icon = null;
+		data.middlename = data.middlename || '';
+		data.middlename_icon = null;
+		data.gender = data.gender || '';
+		data.gender_icon = null;
+		data.date_of_birth = data.date_of_birth || '';
+		data.date_of_birth_icon = null;
+		data.department = data.department || '';
+		data.department_icon = null;
+		data.diagnosis = data.diagnosis || '';
+		data.diagnosis_icon = null;
+
+		//data.editing = data.editing || true;
+		//data.saving = data.saving || false;
+
+		var app = new Vue({
+			el: '#form_profile',
+			data: data,
+
+			created: function () {
+				this.debouncedTestUsername = _.debounce(this.testUsername, 500)
+			},
+
+			computed: {
+				isEnableAdd: function () {
+					if (
+						//this.username_icon == icon_ok
+						/*&&*/ this.lastname_icon == icon_ok
+						&& this.firstname_icon == icon_ok
+						&& this.middlename_icon == icon_ok
+						&& this.gender_icon == icon_ok
+						&& this.date_of_birth_icon == icon_ok
+						&& this.department_icon == icon_ok
+						&& this.diagnosis_icon == icon_ok
+						)
+						return true;
+
+					return false;
+				}
+			},
+			watch: {
+				username: function (val, valOld) {
+					console.log('App.watch:username', val);
+					this.username_icon = icon_wait;
+					this.debouncedTestUsername();
+				},
+				lastname: function (val, valOld) {
+					this.lastname_icon = val != '' ?  icon_ok : icon_fail;
+				},
+				firstname: function (val, valOld) {
+					this.firstname_icon = val != '' ? icon_ok : icon_fail;
+				},
+				middlename: function (val, valOld) {
+					this.middlename_icon = val != '' ? icon_ok : icon_fail;
+				},
+				gender: function (val, valOld) {
+					this.gender_icon = val != '' ? icon_ok : icon_fail;
+				},
+				date_of_birth: function (val, valOld) {
+					this.date_of_birth_icon = val != '' ? icon_ok : icon_fail;
+				},
+				department: function (val, valOld) {
+					this.department_icon = val != '' ? icon_ok : icon_fail;
+				},
+				diagnosis: function (val, valOld) {
+					this.diagnosis_icon = val != '' ? icon_ok : icon_fail;
+				},
+			},
+			methods: {
+				testUsername: function () {
+					if (this.username == '') {
+						this.username_icon = icon_fail;
+						return;
+					}
+
+					this.username_icon = icon_wait;
+
+					var vm = this;
+					axios.post('/api/v1.0/test_username', {
+						username: this.username
+					})
+					.then(function (response) {
+						console.log(response.data.result);
+						vm.username_icon = response.data.result ? icon_ok : icon_fail;
+					})
+					.catch(function (error) {
+						vm.username_icon = icon_fail;
+						console.log('Error!');
+					});
+				}
+			}
+		});
+
+		var $datepickers = $('.my-datepicker');
+		$datepickers.datepicker({
+			//timepicker: true,
+			todayButton: new Date(),
+			autoClose: true,
+			altField: 'не задано'
+		})
+
+
+	</script>
+
+(% endblock %)

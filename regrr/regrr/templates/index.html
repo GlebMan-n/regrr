@@ -1,0 +1,178 @@
+﻿(% extends "layout.html" %)
+(% import "macros.html" as macros %)
+
+
+(% block block_head %)
+<style>
+	#table_orgamizations {
+		font-size: 0.9em;
+	}
+
+		#table_orgamizations th,
+		#table_orgamizations td {
+			width: auto;
+		}
+</style>
+
+<script src="/static/_design/extern/vue.js-v2.5.22/vue.js"></script>
+(% endblock %)
+
+
+
+(% block content %)
+
+	(% if server.isAdmin %)
+
+	<div class="row">
+		<div class="col-12">
+			<a class="button primary" href="/user_add" title="Добавить нового пользователя">Добавить</a>
+		</div>
+	</div>
+
+	<br>
+
+	<div class="table-wrapper" id="users">
+		<table class="alt">
+			<thead>
+				<tr>
+					<th>№</th>
+					<th>Логин</th>
+					<th>ФИО</th>
+					<th>Должность</th>
+					<th>email</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(user, i) in users" v-bind:key="user.id">
+					<td v-html="users_offset + i + 1"></td>
+					<td v-html="getUsername(user)"></td>
+					<td v-html="getFullname(user)"></td>
+					<td v-html="user.position"></td>
+					<td v-html="user.email"></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<!--										<td v-html="users.length"></td>
+		-->
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	(( macros.pagination(server.pagination) ))
+
+	<script>
+
+		var data = {
+			username: 'ivanov',
+			users: [],
+			url_user: '/user'
+		};
+
+		try {
+			(( server.data | safe));
+		}
+		catch (e) {
+			console.log('Серверные данные не были проинициализированы (users)');
+		}
+
+		data.url_user = data.url_user || '/user';
+		data.users = data.users || [];
+		data.users_offset = data.users_offset || 0;
+		
+
+
+		var appUsers = new Vue({
+			el: '#users',
+			data: data,/*,
+			mounted: function () {
+				$('<script src="//static//_design//assets//js//main.js"><//script>')
+					.appendTo('body');
+			}*/
+			methods: {
+				getUsername: function (user) {
+					return Utils.html.a(this.url_user + '/' + user.username, user.username);
+				},
+				getFullname: function (user) {
+					var fullname = user.lastname + ' ' + user.firstname + ' ' + user.middlename;
+					return Utils.html.a(this.url_user + '/' + user.username, fullname);
+				}
+			}
+		});
+	</script>
+
+	(% else %) <!-- !server.isAdmin -->
+
+	<div class="row">
+		<div class="col-12">
+			<a class="button primary" href="/patient_add" title="Добавить нового пациента">Добавить</a>
+		</div>
+	</div>
+
+	<br>
+
+	<div class="table-wrapper" id="patients">
+		<table class="alt">
+			<thead>
+				<tr>
+					<th>№</th>
+					<th>ФИО</th>
+					<th>Отеделение</th>
+					<th>Диагноз</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(patient, i) in patients" v-bind:key="patient.id">
+					<td v-html="patients_offset + i + 1"></td>
+					<td v-html="getFullname(patient)"></td>
+					<td v-html="patient.department"></td>
+					<td v-html="patient.diagnosis"></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<!--										<td v-html="patients.length"></td>
+		-->
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	(( macros.pagination(server.pagination) ))
+
+	<script>
+
+		var data = {};
+
+		try {
+			(( server.data | safe));
+		}
+		catch (e) {
+			console.log('Серверные данные не были проинициализированы (patients)');
+		}
+
+		data.url_patient = data.url_patient || '/patient';
+		data.users = data.users || [];
+		data.patients_offset = data.patients_offset || 0;
+
+
+		var appPatients = new Vue({
+			el: '#patients',
+			data: data,/*,
+			mounted: function () {
+				$('<script src="//static//_design//assets//js//main.js"><//script>')
+					.appendTo('body');
+			}*/
+			methods: {
+				getFullname: function (patient) {
+					var fullname = patient.lastname + ' ' + patient.firstname + ' ' + patient.middlename;
+					return Utils.html.a(this.url_patient + '/' + patient.id, fullname);
+				}
+			}
+		});
+	</script>
+
+	(% endif %) <!-- !server.isAdmin -->
+
+(% endblock %)

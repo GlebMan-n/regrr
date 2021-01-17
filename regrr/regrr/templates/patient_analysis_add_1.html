@@ -1,0 +1,433 @@
+﻿(% extends "layout.html" %)
+(% import "macros.html" as macros %)
+
+
+(% block block_head %)
+<style>
+	#app {
+		max-width: 1000px;
+	}
+
+	.form-profile {
+		max-width: 700px;
+	}
+
+	.table_variants {
+		margin: 0 0 0 0;
+	}
+
+	table.table_variants tbody tr {
+		background-color: #f5f1f1;
+	}
+
+	.table_variants tbody tr:hover {
+		background-color: #ffff99;
+	}
+
+	.table_variants tbody tr.selected {
+		color: #fff;
+		background-color: #1bb193;
+	}
+
+	.selected {
+		color: #fff;
+		background-color: #1bb193;
+	}
+
+	.selected-red {
+		color: #fff;
+		background-color: #e02222;
+	}
+
+	.w_50 {
+		width: 50%;
+	}
+
+	table tbody tr:nth-child(2n + 1) {
+		background-color: transparent;
+	}
+
+	.fs-small {
+		font-size: 0.85em;
+	}
+
+	.fs-large {
+		font-size: 1.2em;
+	}
+	
+	ul.arrow {
+		position: relative;
+		list-style: none;
+		margin-left: 0;
+		padding-left: 1.0em;
+
+		color: #3d4449;
+		font-family: "Roboto Slab", serif;
+		font-weight: 700;
+		line-height: 1.5;
+
+	}
+	ul.arrow li:before {
+		content: "»";
+		position: absolute;
+		left: 0;
+	}
+	
+</style>
+(% endblock %)
+
+
+(% block content %)
+
+	(#
+	<ul class="arrow" style="font-size: 1.5em;">
+		<li><a href="#">Пациенты</a></li>
+		<li><a href="#">Набиев Гасан Набиевич ((1))</a></li>
+		<li><a href="#">Клинический&nbsp;анализ&nbsp;крови</a></li>
+		<li>Новый</li>
+	</ul>
+
+	<br>
+	#)
+
+	<div id="app" v-cloak>
+
+		<table class="w_100" v-if="false">
+			<tr>
+				<td class="w_50 va_top">
+					Пациент: <b v-html="data.patient"></b> Пол:&nbsp;<b>{{ data.gender }}</b> <br />
+					Возраст: <b>{{ data.age }} л.</b> <br />
+					Дата поступления образца: <b>{{ data.date_receipt_example }}</b>
+				</td>
+
+				<td class="w_50 va_top">
+					№ заявки: <b> {{ data.number_request }} </b> <br />
+					Заказчик: <b> {{ data.customer }} </b> <br />
+					Отделение: <b> {{ data.department }} </b>
+				</td>
+			</tr>
+		</table>
+
+		<h2>{{ data.analysis_str }}</h2>
+
+		<ul class="alt">
+			<li>
+			</li>
+		</ul>
+
+		<div class="table-wrapper" style="max-width:800px;">
+			<table class="alt1" style="border-collapse: unset;">
+				<tbody>
+					<tr>
+						<td v-html="nbsp('Дата поступления образца')"></td>
+						<td width="100%">
+							<input type="text"
+								:value="data.date_receipt_example"
+								@input="data.date_receipt_example = $event.target.value"
+								placeholder="Дата поступления образца"
+							    />
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('Дата доставки биоматериала')"></td>
+						<td width="100%">
+							<input type="text"
+   								:value="data.date_delivery_biomaterial"
+								@input="data.date_delivery_biomaterial = $event.target.value"
+								placeholder="Дата доставки биоматериала"
+							    />
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('Дата выполнения')"></td>
+						<td width="100%">
+							<input type="text"
+   								:value="data.date_completion"
+								@input="data.date_completion = $event.target.value"
+								placeholder="Дата выполнения"
+							    />
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('Дата печати')"></td>
+						<td width="100%">
+							<input type="text"
+   								:value="data.date_print"
+								@input="data.date_print = $event.target.value"
+								placeholder="Дата печати"
+							    />
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('№ заявки')"></td>
+						<td width="100%">
+							<input type="text"
+   								:value="data.request_number"
+								@input="data.request_number = $event.target.value"
+								placeholder="№ заявки"
+							    />
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('Заказчик')"></td>
+						<td width="100%">
+							<input type="text"
+   								:value="data.customer"
+								@input="data.customer = $event.target.value"
+								placeholder="Заказчик"
+							    />
+							
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('Исследованные биоматериалы')"></td>
+						<td width="100%">
+							<input type="text"
+   								:value="data.biomaterials"
+								@input="data.biomaterials = $event.target.value"
+								placeholder="Исследованные биоматериалы"
+							    />
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('Анализы выполнены на оборудовании')"></td>
+						<td width="100%">
+							<input type="text"
+   								:value="data.equipment"
+								@input="data.equipment = $event.target.value"
+								placeholder="Анализы выполнены на оборудовании"
+							    />
+						</td>
+					</tr>
+
+					<tr>
+						<td v-html="nbsp('Заключение/Примечание')"></td>
+						<td width="100%">
+							<textarea 
+   								:value="data.conclusion_note"
+								@input="data.conclusion_note = $event.target.value"
+								placeholder="Заключение/Примечание"
+							    rows="4"
+								></textarea>
+						</td>
+					</tr>
+
+				</tbody>
+			</table>
+		</div>
+
+		<br>
+
+		<div class="table-wrapper">
+			<table class="alt1">
+				<thead>
+					<tr>
+						<th class="ta-l">Тест</th>
+						<th class="ta-c">Результат</th>
+						<th v-if="!isMobile" class="ta-c1" v-html="nbsp('Еденицы измерения')"></th>
+						<th v-if="!isMobile" class="ta-c1" v-html="nbsp('Референсные значения')"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-for="test in data.tests">
+						<td v-if="isMobile" v-html="tr2(test)" class="va-m"></td>
+						<td v-if="!isMobile" v-html="test.name" class="va-m"></td>
+						<td class="va-m">
+							<input type="text"
+								class="ta-r"
+								:value="test.result"
+								@input="test.result = $event.target.value"/>
+						</td>
+						<td v-if="!isMobile" v-html="nbsp(test.unit)" class="ta-c va-m"></td>
+						<td v-if="!isMobile" v-html="nbsp(test.refs)" class="ta-c va-m"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<ul class="actions">
+			<li>
+				<input type="submit"
+					value="Добавить"
+					class="primary"
+					:disabled="!isOk || isSending"
+					@click="sendResult"/>
+			</li>
+		</ul>
+
+	</div>
+
+	<script>
+
+		//-----------------------------
+		var data = {};
+		try {
+			((server.data | safe));
+		}
+		catch (e) {
+			console.log('Серверные данные не были проинициализированы');
+		}
+
+		/*
+		var tests = [
+			{
+				id: 1,
+				name: 'АЛТ',
+				result: '', // 24,00
+				unit: 'Ед/л',
+				refs: '0,00 - 55,00'
+			},
+			{
+				id: 2,
+				name: 'АСТ',
+				result: '', // 19,00
+				unit: 'Ед/л',
+				refs: '5,00 - 34,00'
+			}
+		];
+
+		*/
+
+		var dataConst = {
+			analysis_str: 'Не задано', // 'Биохимические исследования', // 'Клинический анализ крови', 
+			patient: 'Не задано', //'Иванов И.И.',
+			//gender: 'м',
+			//age: 40,
+		};
+
+		var dataDef = {
+			date_receipt_example: moment().format('DD.MM.YYYY'),
+			request_number: '',
+			customer: '', // НМИЦ онкологии
+			//department: '',
+			date_delivery_biomaterial: moment().subtract(2, 'hours').format('DD.MM.YYYY HH:mm'),
+			date_completion: moment().format('DD.MM.YYYY HH:mm'),
+			date_print: moment().format('DD.MM.YYYY'),
+			biomaterials: '', // Кровь (активатор свертывания и гель)
+			equipment: '', // Architect c4000
+			conclusion_note: '', // Измерение Креатинина стандартизовано по методу IDMS
+			//tests: tests
+		};
+
+		var dataTest = {
+			request_number: '12345',
+			customer: 'НМИЦ онкологии',
+			biomaterials: 'Кровь (активатор свертывания и гель)',
+			equipment: 'Architect c4000',
+			conclusion_note: 'Измерение Креатинина стандартизовано по методу IDMS'
+		};
+
+		data = _.extend({}, dataDef, /*dataTest, */data);
+
+
+		for (var i = 0, n = data.tests.length; i < n; ++i) {
+			var test = data.tests[i];
+			test.result = test.result || '';
+		}
+
+
+		//-----------------------------
+		document.addEventListener("DOMContentLoaded", function (event) {
+
+			var nbsp = Utils.html.nbsp;
+			var b = Utils.html.b;
+
+			var route_analysis_add = data.route_analysis_add || '/patient/<patient_id>/analysis_type/<analysis_type>/analysis_add';
+			var route_analysis_viewer_id = data.route_analysis_viewer_id || '/patient/<patient_id>/analysis_type/<analysis_type>/analysis/<analysis_id>';
+			var url_analysis_add = Utils.routes.makeUrlFromRoute(route_analysis_add, data);
+
+			data.isMobile = breakpoints.active('min-to-small');
+
+			var app = new Vue({
+				el: '#app',
+				data: {
+					data: data,
+					isMobile: false,
+					isSending: false
+				},
+				computed: {
+					isOk: function () {
+						var tests = this.data.tests;
+
+						for (var i = 0, n = tests.length; i < n; ++i) {
+							var test = tests[i];
+							if (test.result != '')
+								return true;
+						}
+					
+						return false;
+					}
+				},
+				methods: {
+					nbsp: nbsp,
+					tr2: function (item) {
+						var s = '';
+						s += '<div>' + b(item.name) + '</div>';
+						s += '<div class="fs-small">' + nbsp(item.unit) + '</div>';
+						s += '<div class="fs-small">' + nbsp(item.refs) + '</div>';
+						return s;
+					},
+
+					sendResult: function () {
+						var this2 = this;
+						this2.isSending = true;
+
+						//var keys = _.keys(dataDef);
+						var result = {};
+						var params = {};
+						for (var k in dataDef) {
+							params[k] = this.data[k];
+						}
+						result['params'] = params;
+
+						var items = _.map(this.data.tests, 'result');
+						result['items'] = items;
+
+						//console.log('Error!');
+
+						axios.post(url_analysis_add, result)
+						.then(function (response) {
+
+							if (!response.data.result) {
+								//TODO отработать ошибку
+								console.log('Error!');
+								return;
+							}
+
+							data.analysis_id = response.data.analysis_id;
+							var url = Utils.routes.makeUrlFromRoute(route_analysis_viewer_id, data);
+							window.location.replace(url);
+							// this2.isSending = false;
+							//						console.log(response.data.result);
+							//						vm.username_icon = response.data.result ? icon_ok : icon_fail;
+						})
+						.catch(function (error) {
+							//						vm.username_icon = icon_fail;
+							console.log('Error!');
+							this2.isSending = false;
+						});
+
+					}
+				}
+			});
+
+			breakpoints.on('min-to-small', function () {
+				app.isMobile = true;
+				console.log('ACTIVE min-to-small');
+			});
+			breakpoints.on('small-to-max', function () {
+				app.isMobile = false;
+				console.log('ACTIVE small-to-max');
+			});
+		});
+	</script>
+
+
+(% endblock %)

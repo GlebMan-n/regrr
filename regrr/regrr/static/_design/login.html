@@ -1,0 +1,149 @@
+﻿<!DOCTYPE HTML>
+
+<html>
+<head>
+	<title>Войти - Реестр результатов анализов и тестирования</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
+	<!--<link href="../bootstrap-4.2.1-dist/css/bootstrap.css" rel="stylesheet" />-->
+
+	<link rel="stylesheet" href="assets/css/main.css" />
+
+	<style>
+		body {
+			background-color: #f5f5f5;
+		}
+
+		@media screen and (max-width: 736px) {
+			#header {
+				padding-top: 2.0em;
+			}
+		}
+
+		#section_login {
+			justify-content: center;
+			display: flex;
+			flex-wrap: wrap;
+			box-sizing: border-box;
+		}
+
+		.form-signin {
+			max-width: 400px;
+			width: 400px;
+			background-color: #ffffff;
+		}
+
+			.form-signin .form-control {
+				position: relative;
+			}
+
+				.form-signin .form-control:focus {
+					z-index: 2;
+					color: #495057;
+					background-color: #fff;
+					border-color: #80bdff;
+					outline: 0;
+					box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+				}
+
+
+			.form-signin input[type="text"] {
+				margin-bottom: -1px;
+				border-bottom-right-radius: 0;
+				border-bottom-left-radius: 0;
+			}
+
+			.form-signin input[type="password"] {
+				margin-bottom: 10px;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+			}
+
+			.form-signin hr {
+				margin: 1.5em 0;
+			}
+
+			.form-signin .error {
+				color: red;
+			}
+
+		.display_none {
+			display: none;
+		}
+	</style>
+
+</head>
+
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+
+				<!-- Header -->
+				<header id="header" class="">
+					<a href="index.html" class="logo"><h2>Реестр результатов анализов и&nbsp;тестирования</h2></a>
+				</header>
+
+				<section id="section_login">
+					<form class="form-signin box" method="post" action="/login">
+
+						<h2>Пожалуйста войдите</h2>
+
+						<div class="row gtr-uniform">
+							<div class="col-12">
+								<input type="text" class="form-control" name="username" id="username" value="" placeholder="Логин" required autofocus/>
+								<input type="password" class="form-control" name="password" id="password" value="" placeholder="Пароль" required/>
+							</div>
+
+							<div class="col-12">
+								<input type="checkbox" id="remember" name="remember" checked>
+								<label for="remember">запомнить меня</label>
+							</div>
+
+							<div class="col-12">
+								<ul class="actions fit">
+									<li><input type="submit" value="Войти" class="primary fit" /></li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="error display_none">
+							<hr />
+							<i class="fa fa-exclamation-triangle fa-2x" aria-hidden="true"></i>&nbsp;&nbsp;
+							<i>Не правильный логин или пароль!</i>
+						</div>
+
+					</form>
+				</section>
+
+				<!--<footer id="footer" class="align-center">
+					<p class="copyright">&copy; 2019. regrr.ru. Все права защищены. Design: <a href="https://html5up.net">HTML5&nbsp;UP</a>.</p>
+				</footer>-->
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>-->
+	<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>-->
+	<!--<script src="../bootstrap-4.2.1-dist/jquery-3.3.1/jquery-3.3.1.slim.min.js"></script>
+	<script src="../bootstrap-4.2.1-dist/popper.js-v1.14.6/popper.min.js"></script>
+	<script src="../bootstrap-4.2.1-dist/js/bootstrap.min.js"></script>-->
+
+</body>
+</html>

@@ -1,0 +1,272 @@
+﻿(% extends "layout.html" %)
+(% import "macros.html" as macros %)
+
+
+(% block block_head %)
+<style>
+	.alert {
+		color: red !important;
+		border-color: red !important;
+		box-shadow: inset 0 0 0 2px red;
+	}
+
+		.alert:hover {
+			color: red !important;
+			border-color: red !important;
+			box-shadow: inset 0 0 0 2px red;
+			background-color: rgba(245, 106, 106, 0.15);
+		}
+
+	.animate {
+		transition: all 200ms ease-in;
+	}
+
+	.animate-rotate {
+		transition: transform 200ms ease-in;
+	}
+
+	.rotate-180 {
+		transform: rotate(180deg);
+		/*	transition: transform 180ms ease-in;*/
+	}
+
+	.disable {
+		opacity: 0.5;
+	}
+
+	.disable .button {
+	    pointer-events: none;
+	}
+
+</style>
+(% endblock %)
+
+
+(% block content %)
+
+
+<div id="app" v-cloak>
+
+	<div>
+		&nbsp;
+		<a style="padding: 0 1.5em;"
+		   class="button f-right animate"
+		   v-bind:class="{alert: !is_archive}"
+		   v-bind:title="is_archive ? 'Из архива' : 'В архив'"
+		   @click="archive">
+			<i style="vertical-align: middle;"
+			   class="fa fa-2x fa-long-arrow-right animate-rotate"
+			   v-bind:class="{'rotate-180': is_archive}"></i>
+			&nbsp;&nbsp;&nbsp;
+			<i class="fa fa-2x fa-archive" style="vertical-align: middle;"></i>
+		</a>
+	</div>
+	<br>
+	<br>
+
+	<div class="animate"
+		 v-bind:class="{disable: is_archive}">
+
+		<ul class="alt">
+			<li><b>Дата рождения:</b><span v-html="nbsps + patient.date_of_birth"></span></li>
+			<li><b>Пол:</b><span v-html="nbsps + patient.gender_str"></span></li>
+			<li><b>Отеделение:</b><span v-html="nbsps + patient.department"></span></li>
+			<li><b>Диагноз:</b><span v-html="nbsps + patient.diagnosis"></span></li>
+		</ul>
+
+		<br>
+
+		<section v-for="(group, i) in groups">
+			<header class="major">
+				<h2 style="margin-bottom: 1em;">{{ group.name }}</h2>
+			</header>
+
+			<div class="row">
+				<div class="col-10 col-12-small">
+					<div class="row">
+
+						<div class="col-4 col-6-xlarge col-12-small mb-1_5em"
+							 v-for="analysis in group.analyzes">
+							<a class="button fit primary"
+							   v-bind:href="makeUrlAnalisis(analysis.analysis_type)">
+								{{ analysis.analysis_type_str }}
+							</a>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<br>
+		</section>
+
+	</div>
+</div>
+
+<script>
+
+	var data = {};
+	try {
+		((server.data | safe));
+	}
+	catch (e) {
+		console.warn('Серверные данные не были проинициализированы');
+	}
+
+	function setMenuCur(text0) {
+		var $menu = $('nav#menu ul');
+
+		setMenuCur = function (text) {
+			var $item = $menu.find('.active');
+			if ($item.length) {
+				var $a = $item.find('a');
+				if ($a.text().trim() == text)
+					return;
+
+				$item.removeClass('active');
+			}
+
+			if (!text || text == '')
+				return;
+
+			//text = text.toUpperCase();
+
+			$item = $menu.find('a:contains(' + text + ')');
+			if (!$item.length)
+				return;
+
+			$item.parent().addClass('active');
+		};
+
+		setMenuCur(text0);
+	}
+
+	function setStatusArchive(isArchive) {
+		var el_breadcrumb = document.querySelectorAll('.breadcrumbs a')[0];
+		if (isArchive) {
+			el_breadcrumb.innerText = 'Архив';
+			el_breadcrumb.href = '/archive';
+			setMenuCur('Архив');
+		}
+		else {
+			el_breadcrumb.innerText = 'Пациенты';
+			el_breadcrumb.href = '/';
+			setMenuCur('Пациенты');
+		}
+	}
+
+
+	document.addEventListener("DOMContentLoaded", function (event) {
+
+		console.log('document.addEventListener("DOMContentLoaded") pathient');
+
+		setStatusArchive(data.patient.status == 2);
+
+		$('#nav_context').css('opacity', 1);
+
+		moment.locale('ru');
+
+		//
+		var m = moment(data.patient.date_of_birth, 'DD.MM.YYYY');
+		if (m.isValid()) {
+			data.patient.date_of_birth += ' (' + m.fromNow(true) + ')';
+		}
+
+
+		var route_analysis = "/patient/<patient_id>/analysis_type/<analysis_type>/analysis";
+		var route_api_status = "/api/v1.0/patient/<patient_id>/status";
+		route_api_status = Utils.routes.makeUrlFromRoute(route_api_status, { patient_id: data.patient.id });
+
+		var groups = [{
+			name: 'Кровь',
+			analyzes: [{
+				analysis_type: 1,
+				analysis_type_str: 'Биохимические исследования',
+			}, {
+				analysis_type: 2,
+				analysis_type_str: 'Гемостаз',
+			}, {
+				analysis_type: 3,
+				analysis_type_str: 'Клинический анализ крови',
+			}]
+		}, {
+			name: 'Моча',
+			analyzes: [{
+				analysis_type: 4,
+				analysis_type_str: 'Общий анализ мочи',
+			}]
+		}, {
+			name: 'Остальные',
+			analyzes: [{
+				analysis_type: 5,
+				analysis_type_str: 'Тест NEWS',
+			}, {
+				analysis_type: 6,
+				analysis_type_str: 'Тест VTE',
+			}, {
+				analysis_type: 7,
+				analysis_type_str: 'Дополнительно',
+			}]
+		}];
+
+		data.groups = groups;
+		data.nbsps = Utils.html.nbsp('    ');
+
+		var app = new Vue({
+			el: '#app',
+			data: data,
+			computed: {
+				is_archive: function () {
+					return this.patient.status == 2;
+				}
+			},
+			methods: {
+				makeUrlAnalisis: function (analysis_type) {
+					var params = { patient_id: this.patient.id, analysis_type: analysis_type };
+					return Utils.routes.makeUrlFromRoute(route_analysis, params);
+				},
+
+				archive: function () {
+
+					if (this.patient.status != 2) {
+						this.patient.status = 2;
+					}
+					else {
+						this.patient.status = 1;
+					}
+
+					setStatusArchive(data.patient.status == 2);
+
+					axios.post(route_api_status, {
+						status: this.patient.status
+					})
+					.then(function (response) {
+						console.log(response.data.result);
+						//vm.username_icon = response.data.result ? icon_ok : icon_fail;
+					})
+					.catch(function (error) {
+						//vm.username_icon = icon_fail;
+						console.log('Error!');
+					});
+				}
+			}
+		});
+
+		//;
+
+		//status
+
+		/*moment.locale('ru');
+
+		var $date_of_birth = $('#date_of_birth');
+		var date_of_birth = $date_of_birth.text();
+
+		var m = moment(date_of_birth, 'DD.MM.YYYY');
+		if (m.isValid()) {
+			var str = m.fromNow(true);
+			$date_of_birth.after(' (' + str + ')');
+		}
+		*/
+	});
+</script>
+
+(% endblock %)

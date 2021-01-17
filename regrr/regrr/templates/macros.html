@@ -1,0 +1,36 @@
+﻿(% macro pagination(data) %)
+
+<ul class="pagination">
+	<li>
+		(% if data.prev %)
+		<a href="((data.prev))" class="page"><i class="fa fa-arrow-left"></i></a>
+		(% else %)
+		<span class="disabled"><i class="fa fa-arrow-left"></i></span>
+		(% endif %)
+	</li>
+
+	(% for item in data.list %)
+	<li>
+
+		(% if item %)
+			(% if item.href == data.cur %)
+			<a href="(( item.href ))" class="page active">(( item.text ))</a>
+			(% else %)
+			<a href="(( item.href ))" class="page">(( item.text ))</a>
+			(% endif %)
+		(% else %)
+			<span>&hellip;</span>
+		(% endif %)
+	</li>
+	(% endfor %)
+
+	<li>
+		(% if data.next %)
+		<a href="((data.next))" class="page"><i class="fa fa-arrow-right"></i></a>
+		(% else %)
+		<span class="disabled"><i class="fa fa-arrow-right"></i></span>
+		(% endif %)
+	</li>
+</ul>
+
+(% endmacro %)
